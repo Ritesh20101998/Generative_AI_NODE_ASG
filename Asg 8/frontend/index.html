@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product and Review Management</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-form, .review-form {
+      margin-bottom: 1rem;
+    }
+
+    .product-list, .review-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .product-item, .review-item {
+      background-color: #eee;
+      margin-bottom: 0.5rem;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Product and Review Management</h1>
+  </header>
+
+  <main>
+    <section>
+      <h2>Add Product</h2>
+      <form class="product-form">
+        <label for="productName">Name:</label>
+        <input type="text" id="productName" required>
+        <label for="productPrice">Price:</label>
+        <input type="number" id="productPrice" required>
+        <button type="button" onclick="addProduct()">Add Product</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Products</h2>
+      <ul class="product-list" id="productList"></ul>
+    </section>
+
+    <section>
+      <h2>Add Review</h2>
+      <form class="review-form">
+        <label for="reviewUserId">User ID:</label>
+        <input type="text" id="reviewUserId" required>
+        <label for="reviewDescription">Description:</label>
+        <input type="text" id="reviewDescription" required>
+        <button type="button" onclick="addReview()">Add Review</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Reviews</h2>
+      <ul class="review-list" id="reviewList"></ul>
+    </section>
+  </main>
+
+  <script>
+    // Sample API endpoints for demonstration
+    const apiUrl = 'http://localhost:3000/api';
+
+    // Function to add a product
+    function addProduct() {
+      const productName = document.getElementById('productName').value;
+      const productPrice = document.getElementById('productPrice').value;
+
+      // Call your backend API to add a product
+      fetch(`${apiUrl}/products`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: productName,
+          price: parseFloat(productPrice),
+        }),
+      })
+      .then(response => response.json())
+      .then(product => {
+        // Update the product list
+        const productList = document.getElementById('productList');
+        const productItem = document.createElement('li');
+        productItem.classList.add('product-item');
+        productItem.textContent = `${product.name} - $${product.price}`;
+        productList.appendChild(productItem);
+      })
+      .catch(error => console.error('Error adding product:', error));
+    }
+
+    // Function to add a review
+    function addReview() {
+      const reviewUserId = document.getElementById('reviewUserId').value;
+      const reviewDescription = document.getElementById('reviewDescription').value;
+
+      // For simplicity, let's assume productId is known (you might want to get it from the user)
+      const productId = '123'; 
+
+      // Call your backend API to add a review for a product
+      fetch(`${apiUrl}/products/${productId}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: reviewUserId,
+          description: reviewDescription,
+        }),
+      })
+      .then(response => response.json())
+      .then(review => {
+        // Update the review list
+        const reviewList = document.getElementById('reviewList');
+        const reviewItem = document.createElement('li');
+        reviewItem.classList.add('review-item');
+        reviewItem.textContent = `${review.userId}: ${review.description}`;
+        reviewList.appendChild(reviewItem);
+      })
+      .catch(error => console.error('Error adding review:', error));
+    }
+
+    // Function to load products and reviews on page load
+    function loadProductsAndReviews() {
+      // Call your backend API to fetch products and reviews and update the UI
+      // This can be done using fetch() and updating the UI based on the response
+    }
+
+    // Call loadProductsAndReviews on page load
+    document.addEventListener('DOMContentLoaded', loadProductsAndReviews);
+  </script>
+</body>
+</html>
